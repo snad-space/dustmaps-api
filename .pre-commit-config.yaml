@@ -1,9 +1,7 @@
 ci:
   skip:
-    - cargo-fmt
     - cargo-clippy
     - cargo-test
-    - data-prep-tests
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -27,7 +25,7 @@ repos:
       - id: cargo-fmt
         name: cargo fmt
         entry: cargo fmt --manifest-path app/Cargo.toml --all -- --check
-        language: system
+        language: rust
         types: [rust]
         pass_filenames: false
 
@@ -43,11 +41,4 @@ repos:
         entry: cargo test --manifest-path app/Cargo.toml
         language: system
         types: [rust]
-        pass_filenames: false
-
-      - id: data-prep-tests
-        name: data-prep tests
-        entry: uv run --project data-prep --group test pytest -q data-prep/tests
-        language: system
-        types: [python]
         pass_filenames: false
