@@ -465,7 +465,8 @@ Modelled on the most recently maintained single-service SNAD repos — `ztf-refe
 
 ```yaml
 services:
-  app:
+  dustmaps-app:
+    image: ghcr.io/snad-space/dustmaps-api:latest
     build: .
     environment:
       VIRTUAL_HOST: dustmaps.snad.space
@@ -491,27 +492,6 @@ latter.)
 
 No internal `app` network either — that exists in the other repos to isolate a Postgres
 container from the proxy, and we have no database.
-
-### `docker-compose-dev.yml`
-
-SNAD's dev convention is a `dev.` subdomain through the *same* proxy, not a loopback port
-(`ztf-reference/docker-compose-dev.yml`). Overriding only the three host variables:
-
-```yaml
-services:
-  app:
-    environment:
-      VIRTUAL_HOST: dev.dustmaps.snad.space
-      DYNDNS_HOST: dev.dustmaps.snad.space
-      LETSENCRYPT_HOST: dev.dustmaps.snad.space
-```
-
-The production file's environment is *only* the five proxy variables, so the dev override
-is only the three that name the host.
-
-For laptop iteration a further local override can bind-mount a pre-built `/data` (cf.
-`ztf-reference`, which host-mounts `/srv/data/ztf-reference/...`), so rebuilding the server
-does not re-download and re-convert several GB each time.
 
 **Memory limits.** `web-light-curve-features` sets `mem_limit: 2g`. We should *not* copy
 that blindly: mmap'd page cache counts toward a cgroup's memory limit, so a tight limit
@@ -556,9 +536,9 @@ is; it calls an API like it calls every other SNAD API.
 - [x] **M3 — CSFD endpoint.** mmap reader, `spawn_blocking`, real-data API-vs-dustmaps golden test green.
 - [x] **M4 — prep for Bayestar.** Lookup-table build + the `_find_data_idx` equivalence
       self-check; confirm finest nside and `n_pix`.
-- [ ] **M5 — Bayestar endpoint.** DM interpolation with all three branches, footprint
+- [x] **M5 — Bayestar endpoint.** DM interpolation with all three branches, footprint
       handling, golden test green.
-- [ ] **M6 — Docker.** Multi-stage image, healthcheck, docker-based golden test job.
+- [x] **M6 — Docker.** Multi-stage image, healthcheck, docker-based golden test job.
 - [ ] **M7 — perf.** Benchmarks, `madvise` tuning, documented numbers.
 - [ ] **M8 — viewer integration.** PR in `ztf/web` (see §8), deployed behind the existing
       `pr<N>.ztf.snad.space` preview before merge.
