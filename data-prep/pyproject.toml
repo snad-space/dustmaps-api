@@ -4,7 +4,9 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "astropy>=7,<8",
+    "cdshealpix>=0.8.1,<0.9",
     "dustmaps>=1.0",
+    "h5py>=3,<4",
     "numpy>=2,<3",
 ]
 

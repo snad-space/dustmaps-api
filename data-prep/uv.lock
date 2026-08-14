@@ -35,6 +35,44 @@ wheels = [
 ]
 
 [[package]]
+name = "cdshealpix"
+version = "0.8.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "astropy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/05/e9/531fb7d7dbff947f566cfd6322eae1b30586f0bcde327670fae7a8c61b9c/cdshealpix-0.8.1.tar.gz", hash = "sha256:b5c23d66f22a67b5a4429aa9ebd3b60a9c94467f2de8218ee46cff37338cab7c", size = 1612573, upload-time = "2026-03-11T15:06:27.308Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2e/c4/bee386870d81cf1aa1c3b259623b2f3555392395befaac32268dd277f951/cdshealpix-0.8.1-cp312-cp312-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:be9d1dc2a745b7e234c7efe5dc38a25c42822428b694891af52b41c91bb3fe2e", size = 1792399, upload-time = "2026-03-11T15:12:20.603Z" },
+    { url = "https://files.pythonhosted.org/packages/33/76/213ce161729a59f2fbd4ba91e85acf62e4ba93aa88ea7acdac7853085de0/cdshealpix-0.8.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fef71c3bbcdf9056025fd9ee5fd01ed806428752d3f38b460a91dd69979181ac", size = 1199544, upload-time = "2026-03-11T15:12:56.076Z" },
+    { url = "https://files.pythonhosted.org/packages/da/eb/b8a9d28ceb65c404aa5406f77a3a49eea0367a6dc25c7ce9dd0f3c4f5d69/cdshealpix-0.8.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b5ec740134f1cfe2bc4981467d49ff02fcfa242f31051e32eec1b4dd470b2909", size = 1226609, upload-time = "2026-03-11T15:21:49.639Z" },
+    { url = "https://files.pythonhosted.org/packages/3f/58/2ade66306b3c16cd759ebbc46b8e55f98ac6882695424e96f21fb2258beb/cdshealpix-0.8.1-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:017bdc48de32b7f7cfd62033da8e4c6bb86139b1f163956ce5a9d0cbd29fdfb8", size = 1366842, upload-time = "2026-03-11T15:10:46.078Z" },
+    { url = "https://files.pythonhosted.org/packages/00/e6/32fcd1cf68ef0d31066cc2346045351e3bb577c7a06cf14a8fdf1e124304/cdshealpix-0.8.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c63af22e6146b329bc49e73415a9a0bfd43fde184e41a7e67d141293cdfb8518", size = 1293898, upload-time = "2026-03-11T15:10:36.927Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/7a/bb1fa8b39a93feb91472cf43364f12ddd2b30c7b32044244b96e011ae00f/cdshealpix-0.8.1-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:beccb9b50037e1d33411dc410f438c2789d33a04ae791f5576f811580863a5d2", size = 1776767, upload-time = "2026-03-11T15:21:58.23Z" },
+    { url = "https://files.pythonhosted.org/packages/79/48/4962b9292aa814ba4ae9de9f54aec3b4bca6d566521c83497eaa9ca2e644/cdshealpix-0.8.1-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:66637da02427431100682c9b016b9df8f432f4585c9f59237a09abd8aeea0494", size = 1641838, upload-time = "2026-03-11T15:10:48.198Z" },
+    { url = "https://files.pythonhosted.org/packages/77/7c/1d38f90e9067fdd5c28fd4d01e4f0769dff21e975df0ae5e0394382b80e9/cdshealpix-0.8.1-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:b7281d7f43741fee6fa7946370a4caa8ada727d7135affe943fc513118684fbc", size = 2135425, upload-time = "2026-03-11T15:11:17.464Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/20/896e49e2250ac9b2bb89bb6c949b35e69b9326507302758ca27ea8c6d87c/cdshealpix-0.8.1-cp312-cp312-win_amd64.whl", hash = "sha256:fb374bdac0486ff28a53d5254a5374ddd39d01a33a273a21678276363482b6b4", size = 1185675, upload-time = "2026-03-11T15:07:14.472Z" },
+    { url = "https://files.pythonhosted.org/packages/36/68/02de46b3f764f942bc4c2385dd5ceb0d471131df1f60c63f05634e8bb082/cdshealpix-0.8.1-cp313-cp313-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:6db405f301e49877a730fc355c3240774591059f67c99364260046808ea2d3c5", size = 1791281, upload-time = "2026-03-11T15:12:22.48Z" },
+    { url = "https://files.pythonhosted.org/packages/72/5c/08ecd67852fb76c2946b888cdc1d8acbc782101b87de15cec842726e6606/cdshealpix-0.8.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:1cc26c546d3fe126f1e42ee22ad17442f1cf054577d0a90aea2f1ececb2b49a8", size = 1199405, upload-time = "2026-03-11T15:13:00.249Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/d4/82c63a248719a4028b6e2d8231d8475316aaaf7c1f6488895178b6d648cf/cdshealpix-0.8.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ad8b352c659b378c83dccf997b4cb8558cd65f4d52a5d9ff2300d05c96b206a8", size = 1226072, upload-time = "2026-03-11T15:27:12.918Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/7b/f8ed7d3f3e6fd5047567a00c87a7685519a92d07794f8df458347d72628a/cdshealpix-0.8.1-cp313-cp313-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d8559242e83737fdbd9c66f7361a365c87258024df8a183b5668c255bd4eaad2", size = 1366488, upload-time = "2026-03-11T15:11:20.65Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/0a/167a0cf79d2365cb138008c8eb9389a0e653e43b413204ce8300cc16f587/cdshealpix-0.8.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a031ee2845447d0bd0ea28d88112922723bcc0c34c26f2e6b87938f0648b48d0", size = 1293117, upload-time = "2026-03-11T15:12:00.204Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/24/8d262b99c64c9999ddd99ff78429e0d0ff6758f50195895a99402d15c1ef/cdshealpix-0.8.1-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:eeeed1d00ca96b99d304b5ffa47059eeac24d5d73fb59f58e0c1c088749ce3ba", size = 1776241, upload-time = "2026-03-11T15:27:21.527Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/8f/2ee9dbefac6e4e58f4ae0b3c744ee16e51c3959573903d3f7731b2464102/cdshealpix-0.8.1-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:4a895c354415988dbada73d50da569052a483af1dca576d9d4b690437ac26efd", size = 1641547, upload-time = "2026-03-11T15:11:22.778Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/6b/12bd07740cb838ce61b644e4877137bbfc8067176e31ca4c268e442ddc7a/cdshealpix-0.8.1-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:e7996020963f1323e8b651c2134e616e8513fa162845cda6963ed398b1e4c63e", size = 2134665, upload-time = "2026-03-11T15:12:41.106Z" },
+    { url = "https://files.pythonhosted.org/packages/d4/04/d75798437c5a6fff9e0008e5d2037cd59014f3d5a3ee8553f792b7e097e5/cdshealpix-0.8.1-cp313-cp313-win_amd64.whl", hash = "sha256:4cfe70dc091cb89b0e7edb35a8b851c58cfc8866cec5d9c2c20c36b2a4a0bbe1", size = 1185286, upload-time = "2026-03-11T15:09:10.58Z" },
+    { url = "https://files.pythonhosted.org/packages/69/45/9c2c4fed6d9503bb726f1510085aa338eccc5eee3cb9a6e9c0ceb2d89f7f/cdshealpix-0.8.1-cp314-cp314-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:9f433d948beff2ae2fb237eaa24cfc6e717ad4f5a918ef0fd11f68dc83fc79b9", size = 1791506, upload-time = "2026-03-11T15:08:49.764Z" },
+    { url = "https://files.pythonhosted.org/packages/cc/ad/7d1e87d056a99d9b74accaad2d81725c564f6ae7e50d9f4a429756a41cbe/cdshealpix-0.8.1-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:87196290025ef7cce58df4d8f7b261ffc6d14b71edac0811a1c472c3d77e8354", size = 1200053, upload-time = "2026-03-11T15:09:19.708Z" },
+    { url = "https://files.pythonhosted.org/packages/9f/17/6be1c0539552de74fb0da2e4d0c98ed12677a7d222c22fbc82e040db4c75/cdshealpix-0.8.1-cp314-cp314-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3fe11aca64ebf4c8950f05d6e49734da3e5743a690a1b1d8d11c1f7f7defb2a7", size = 1226950, upload-time = "2026-03-11T15:32:43.506Z" },
+    { url = "https://files.pythonhosted.org/packages/58/73/b2d66a7a8ed1a568ba9451de187732a5d1b9c1eeb1b651c3103c71efbd17/cdshealpix-0.8.1-cp314-cp314-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:56f4086081727ae48ca7b061a9491614cd2111cf1fe59ac6a5917a0fd62ef232", size = 1366828, upload-time = "2026-03-11T15:11:55.279Z" },
+    { url = "https://files.pythonhosted.org/packages/d9/33/99e7ccb88f825fa55453915dfb46ed44844f7090c95fd3ac539370affa0b/cdshealpix-0.8.1-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:24296ac9623c1ddac8a07b484ce078c436370daf9ebe01bf014428967b5e4b3a", size = 1293771, upload-time = "2026-03-11T15:13:23.806Z" },
+    { url = "https://files.pythonhosted.org/packages/96/5c/8bdc320b0ced48b73c7c5526fff583189c2593afdebbed67bde843c6ebdf/cdshealpix-0.8.1-cp314-cp314-musllinux_1_2_aarch64.whl", hash = "sha256:e7fd1dd2792f07ed354a7753d83121d24a6747189eeead10a5fdedacf26f0245", size = 1777074, upload-time = "2026-03-11T15:32:51.959Z" },
+    { url = "https://files.pythonhosted.org/packages/8e/67/3d06c20099b6946a5b2ad5e35bfda7d556faeadcda8d781311edc37c1571/cdshealpix-0.8.1-cp314-cp314-musllinux_1_2_i686.whl", hash = "sha256:bd61d9e404f8c220ea45a96cfd65820ebde1dae2c8b3113d43674ec2aa8ee671", size = 1641846, upload-time = "2026-03-11T15:11:57.338Z" },
+    { url = "https://files.pythonhosted.org/packages/de/a0/96b9e2323256c5ae92d43e9b059e6bfd3328eaabd9c6a8a795a3de3d9ad9/cdshealpix-0.8.1-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:23cbedd04e5f89daf6f6c07b99eda001d3b9f32c22b1cd940614641316229b15", size = 2135191, upload-time = "2026-03-11T15:14:04.611Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/76/3284fe15112fb98e2c51de7ecaa6a2fc764e0556fbd60665cec4be6d58fb/cdshealpix-0.8.1-cp314-cp314-win_amd64.whl", hash = "sha256:cdb839d545586ef6931af7cc05562923fd9044e95d78247784d007098ce0fab5", size = 1184297, upload-time = "2026-03-11T15:09:38.403Z" },
+]
+
+[[package]]
 name = "certifi"
 version = "2026.7.22"
 source = { registry = "https://pypi.org/simple" }
@@ -209,7 +247,9 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "astropy" },
+    { name = "cdshealpix" },
     { name = "dustmaps" },
+    { name = "h5py" },
     { name = "numpy" },
 ]
 
@@ -221,7 +261,9 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "astropy", specifier = ">=7,<8" },
+    { name = "cdshealpix", specifier = ">=0.8.1,<0.9" },
     { name = "dustmaps", specifier = ">=1.0" },
+    { name = "h5py", specifier = ">=3,<4" },
     { name = "numpy", specifier = ">=2,<3" },
 ]
 

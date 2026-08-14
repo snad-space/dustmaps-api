@@ -548,13 +548,13 @@ is; it calls an API like it calls every other SNAD API.
 
 ## 9. Milestones
 
-- [ ] **M0 — skeleton.** axum app, `/api/v1/health`, config, tracing, fmt/clippy/test. No
+- [x] **M0 — skeleton.** axum app, `/api/v1/health`, config, tracing, fmt/clippy/test. No
       data.
-- [ ] **M1 — geometry.** ICRS→Galactic + `ang2pix` (RING/NESTED) with astropy/healpy
+- [x] **M1 — geometry.** ICRS→Galactic + `ang2pix` (RING/NESTED) with astropy/healpy
       golden unit tests. This is the foundation both maps stand on.
 - [x] **M2 — data-prep for CSFD.** Download, convert to `csfd_ebv.npy`, confirm nside 2048.
 - [x] **M3 — CSFD endpoint.** mmap reader, `spawn_blocking`, real-data API-vs-dustmaps golden test green.
-- [ ] **M4 — prep for Bayestar.** Lookup-table build + the `_find_data_idx` equivalence
+- [x] **M4 — prep for Bayestar.** Lookup-table build + the `_find_data_idx` equivalence
       self-check; confirm finest nside and `n_pix`.
 - [ ] **M5 — Bayestar endpoint.** DM interpolation with all three branches, footprint
       handling, golden test green.
