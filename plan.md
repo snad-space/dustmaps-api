@@ -567,7 +567,7 @@ is; it calls an API like it calls every other SNAD API.
 - [ ] **M1 — geometry.** ICRS→Galactic + `ang2pix` (RING/NESTED) with astropy/healpy
       golden unit tests. This is the foundation both maps stand on.
 - [x] **M2 — data-prep for CSFD.** Download, convert to `csfd_ebv.npy`, confirm nside 2048.
-- [ ] **M3 — CSFD endpoint.** mmap reader, `spawn_blocking`, golden test green.
+- [x] **M3 — CSFD endpoint.** mmap reader, `spawn_blocking`, real-data API-vs-dustmaps golden test green.
 - [ ] **M4 — prep for Bayestar.** Lookup-table build + the `_find_data_idx` equivalence
       self-check; confirm finest nside and `n_pix`.
 - [ ] **M5 — Bayestar endpoint.** DM interpolation with all three branches, footprint
