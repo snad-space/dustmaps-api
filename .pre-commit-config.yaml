@@ -9,18 +9,38 @@ repos:
       - id: check-merge-conflict
       - id: check-added-large-files
 
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.0
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+
   - repo: local
     hooks:
       - id: cargo-fmt
         name: cargo fmt
-        entry: cargo fmt --all -- --check
+        entry: cargo fmt --manifest-path app/Cargo.toml --all -- --check
         language: system
         types: [rust]
         pass_filenames: false
 
       - id: cargo-clippy
         name: cargo clippy
-        entry: cargo clippy --all-targets --all-features -- -D warnings
+        entry: cargo clippy --manifest-path app/Cargo.toml --all-targets --all-features -- -D warnings
         language: system
         types: [rust]
+        pass_filenames: false
+
+      - id: cargo-test
+        name: cargo test
+        entry: cargo test --manifest-path app/Cargo.toml
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: data-prep-tests
+        name: data-prep tests
+        entry: uv run --project data-prep --group test pytest -q
+        language: system
+        types: [python]
         pass_filenames: false

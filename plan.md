@@ -13,7 +13,7 @@ Status: plan only, nothing implemented. Baseline: empty repo (`Cargo.toml` +
 
 - [x] **M0** axum skeleton: `/api/v1/health`, config, tracing, fmt/clippy/test green
 - [x] **M1** geometry: ICRS→Galactic + `ang2pix` RING/NESTED, using trusted `cdshealpix`
-- [ ] **M2** `prep`: download + convert CSFD → `csfd_ebv.npy` (f32)
+- [x] **M2** `data-prep`: download + convert CSFD → `csfd_ebv.npy` (f32)
 - [ ] **M3** CSFD endpoint: mmap reader, `spawn_blocking`, golden test green
 - [ ] **M4** `prep`: Bayestar19 → dense nested lookup table + `best_fit` f32, equivalence self-check
 - [ ] **M5** Bayestar endpoint: DM interpolation (3 branches), footprint handling, golden test green
@@ -287,10 +287,10 @@ compatibility problem to design for and no layout-version field.
 
 ## 4. Data preparation (Python, `uv`)
 
-`prep/` — a tiny `uv`-run package, *not* a shipped dependency of the server.
+`data-prep/` — a tiny `uv`-run package, *not* a shipped dependency of the server.
 
 **One environment**, including `dustmaps`: `cdshealpix`, `astropy`, `h5py`, `numpy`,
-`dustmaps`. Run as `uv run --project prep python -m prep.build --out /data`. Using
+`dustmaps`. Run as `uv run --project data-prep python -m data_prep.build --out /data`. Using
 `dustmaps` here is worth it — it owns the download URLs and checksums, and it gives us
 `BayestarQuery._find_data_idx`, which is the reference our flattened lookup table must
 agree with. Its transitive `healpy` costs nothing at runtime: the prep stage is a
@@ -400,7 +400,7 @@ wrong-dtype data file must not become silent NaNs.
 
 The correctness claim is the whole point of the service, so tests come before polish.
 
-1. **Golden fixtures** (committed, small — a few hundred KB). `prep/golden.py` runs the
+1. **Golden fixtures** (committed, small — a few hundred KB). `data-prep/golden.py` runs the
    real Python `dustmaps` over:
    - ~5 000 uniform-on-sphere coords (fixed seed),
    - the viewer's actual usage pattern: a set of real ZTF object coordinates,
@@ -565,7 +565,7 @@ is; it calls an API like it calls every other SNAD API.
       data.
 - [ ] **M1 — geometry.** ICRS→Galactic + `ang2pix` (RING/NESTED) with astropy/healpy
       golden unit tests. This is the foundation both maps stand on.
-- [ ] **M2 — prep for CSFD.** Download, convert to `csfd_ebv.npy`, confirm nside 4096.
+- [x] **M2 — data-prep for CSFD.** Download, convert to `csfd_ebv.npy`, confirm nside 4096.
 - [ ] **M3 — CSFD endpoint.** mmap reader, `spawn_blocking`, golden test green.
 - [ ] **M4 — prep for Bayestar.** Lookup-table build + the `_find_data_idx` equivalence
       self-check; confirm finest nside and `n_pix`.
