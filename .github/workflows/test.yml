@@ -6,9 +6,26 @@ on:
     branches: [main]
 
 jobs:
+  tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: data-prep/uv.lock
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app
+      - run: cargo test --manifest-path app/Cargo.toml
+      - run: uv run --project data-prep --group test pytest -q data-prep/tests
+
   golden:
     name: CSFD golden test
     runs-on: ubuntu-latest
+    needs: tests
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -21,7 +38,6 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: app
-      - run: uv run --project data-prep --group test pytest -q data-prep/tests
       - run: uv run --project data-prep python -m data_prep.build --out /tmp/dustmaps-data
       - run: cargo build --release --manifest-path app/Cargo.toml
       - run: |
