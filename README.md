@@ -1,5 +1,7 @@
 # dustmaps-api
 
+### https://dustmaps.snad.space
+
 A small, fast HTTP service that answers dust-extinction queries: given a sky
 position (and, for Bayestar19, a distance), it returns E(B−V), matching the
 reference Python `dustmaps` package.
