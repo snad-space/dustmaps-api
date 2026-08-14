@@ -22,10 +22,12 @@ jobs:
         with:
           workspaces: app
       - run: uv run --project data-prep python -m data_prep.build --out /tmp/dustmaps-data
+      - run: cargo build --release --manifest-path app/Cargo.toml
       - run: |
-          DUSTMAPS_DATA_DIR=/tmp/dustmaps-data DUSTMAPS_LISTEN_ADDR=127.0.0.1:18080 cargo run --release --manifest-path app/Cargo.toml >/tmp/dustmaps-api.log 2>&1 &
+          DUSTMAPS_DATA_DIR=/tmp/dustmaps-data DUSTMAPS_LISTEN_ADDR=127.0.0.1:18080 app/target/release/dustmaps-api >/tmp/dustmaps-api.log 2>&1 &
           for attempt in $(seq 1 30); do
             curl --fail --silent http://127.0.0.1:18080/api/v1/health && break
             sleep 1
           done
+          curl --fail --silent http://127.0.0.1:18080/api/v1/health
       - run: DUSTMAPS_API_URL=http://127.0.0.1:18080 CSFD_FITS=/tmp/dustmaps-data/raw/csfd_ebv.fits uv run --project integration-tests pytest -q integration-tests/tests
