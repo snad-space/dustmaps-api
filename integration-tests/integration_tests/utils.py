@@ -56,3 +56,18 @@ def api_values(server_url: str, sample: list[tuple[float, float]]) -> list[float
 
     with ThreadPoolExecutor(max_workers=32) as executor:
         return list(executor.map(query, sample))
+
+
+def api_bayestar_values(
+    server_url: str, sample: list[tuple[float, float, float]]
+) -> list[float | None]:
+    def query(item: tuple[float, float, float]) -> float | None:
+        ra, dec, distance_pc = item
+        params = urlencode({"ra": ra, "dec": dec, "distance": distance_pc})
+        with urlopen(
+            f"{server_url.rstrip('/')}/api/v1/bayestar2019?{params}", timeout=10
+        ) as response:
+            return json.load(response)["ebv"]
+
+    with ThreadPoolExecutor(max_workers=32) as executor:
+        return list(executor.map(query, sample))

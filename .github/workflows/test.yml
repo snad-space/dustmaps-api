@@ -23,7 +23,7 @@ jobs:
       - run: uv run --project data-prep --group test pytest -q data-prep/tests
 
   golden:
-    name: CSFD golden test
+    name: Map golden tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,4 +46,8 @@ jobs:
             sleep 1
           done
           curl --fail --silent http://127.0.0.1:18080/api/v1/health
-      - run: DUSTMAPS_API_URL=http://127.0.0.1:18080 CSFD_FITS=/tmp/dustmaps-data/raw/csfd_ebv.fits uv run --project integration-tests pytest -q integration-tests/tests
+      - run: >-
+          DUSTMAPS_API_URL=http://127.0.0.1:18080
+          CSFD_FITS=/tmp/dustmaps-data/raw/csfd_ebv.fits
+          BAYESTAR_H5=/tmp/dustmaps-data/raw/bayestar2019-bestfit.h5
+          uv run --project integration-tests pytest -q integration-tests/tests
