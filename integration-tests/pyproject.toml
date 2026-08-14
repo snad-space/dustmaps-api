@@ -3,7 +3,7 @@ name = "dustmaps-api-integration-tests"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
-    "astropy>=7,<8",
+    "astropy>=8.0.1,<9",
     "dustmaps>=1.0",
     "numpy>=2,<3",
     "pytest>=9.0.3",
