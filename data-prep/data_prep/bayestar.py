@@ -130,6 +130,7 @@ def _self_check_lookup(
     lat = np.degrees(np.arcsin(rng.uniform(-1.0, 1.0, random_count)))
     expected = np.asarray(reference(lon, lat), dtype=np.int64)
     actual = _table_lookup(lon, lat, lookup).astype(np.int64)
+    actual = np.where(actual == BAYESTAR_MISSING, -1, actual)
     expected = np.where(expected < 0, -1, expected)
     if not np.array_equal(actual, expected):
         bad = np.flatnonzero(actual != expected)[0]
@@ -147,6 +148,7 @@ def _self_check_lookup(
         actual = _table_lookup(
             lon_center.to_value(u.deg), lat_center.to_value(u.deg), lookup
         ).astype(np.int64)
+        actual = np.where(actual == BAYESTAR_MISSING, -1, actual)
         if not np.array_equal(actual, expected):
             raise RuntimeError(
                 f"Bayestar lookup mismatch at nside {nside} pixel center"
