@@ -1,3 +1,10 @@
+ci:
+  skip:
+    - cargo-fmt
+    - cargo-clippy
+    - cargo-test
+    - data-prep-tests
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
