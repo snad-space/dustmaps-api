@@ -9,20 +9,6 @@ Home: `snad-space/dustmaps-api`.
 Status: plan only, nothing implemented. Baseline: empty repo (`Cargo.toml` +
 `src/main.rs` stub).
 
-## TODO
-
-- [x] **M0** axum skeleton: `/api/v1/health`, config, tracing, fmt/clippy/test green
-- [x] **M1** geometry: ICRS→Galactic + `ang2pix` RING/NESTED, using trusted `cdshealpix`
-- [x] **M2** `data-prep`: download + convert CSFD → `csfd_ebv.npy` (f32)
-- [ ] **M3** CSFD endpoint: mmap reader, `spawn_blocking`, golden test green
-- [ ] **M4** `prep`: Bayestar19 → dense nested lookup table + `best_fit` f32, equivalence self-check
-- [ ] **M5** Bayestar endpoint: DM interpolation (3 branches), footprint handling, golden test green
-- [ ] **M6** Dockerfile: multi-stage (prep → build → slim runtime), healthcheck, docker golden-test CI job
-- [ ] **M7** perf: criterion + load benches, `madvise` tuning, numbers in README
-- [ ] **M8** viewer integration PR in `ztf/web`: HTTP clients replace `dustmaps`, drop healpy/h5py/data
-
-Details in §9; the same list with context lives there.
-
 ---
 
 ## 1. Objective and scope
