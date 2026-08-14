@@ -6,7 +6,7 @@ use std::{
     sync::Arc,
 };
 
-use memmap2::Mmap;
+use memmap2::{Advice, Mmap};
 use ndarray::{ArrayView1, ArrayView2};
 use ndarray_npy::ViewNpyExt;
 use thiserror::Error;
@@ -77,6 +77,19 @@ impl BayestarMap {
         let bestfit_path = bestfit_path.as_ref().to_owned();
         let lookup_mmap = map_file(&lookup_path)?;
         let bestfit_mmap = map_file(&bestfit_path)?;
+        // Queries land on scattered pixel/row offsets, so sequential
+        // readahead would waste I/O and page-cache space.
+        if let Err(source) = lookup_mmap.advise(Advice::Random) {
+            tracing::warn!(path = %lookup_path.display(), %source, "madvise(MADV_RANDOM) failed");
+        }
+        if let Err(source) = bestfit_mmap.advise(Advice::Random) {
+            tracing::warn!(path = %bestfit_path.display(), %source, "madvise(MADV_RANDOM) failed");
+        }
+        // The lookup table is hit by every single query, so warm it into
+        // page cache proactively instead of paying cold faults on first use.
+        if let Err(source) = lookup_mmap.advise(Advice::WillNeed) {
+            tracing::warn!(path = %lookup_path.display(), %source, "madvise(MADV_WILLNEED) failed");
+        }
         let map = Self {
             lookup_mmap,
             bestfit_mmap,

@@ -539,7 +539,9 @@ is; it calls an API like it calls every other SNAD API.
 - [x] **M5 — Bayestar endpoint.** DM interpolation with all three branches, footprint
       handling, golden test green.
 - [x] **M6 — Docker.** Multi-stage image, healthcheck, docker-based golden test job.
-- [ ] **M7 — perf.** Benchmarks, `madvise` tuning, documented numbers.
+- [x] **M7 — perf.** `madvise` tuning (MADV_RANDOM on all mmaps, MADV_WILLNEED on the
+      Bayestar lookup table). Benchmarks and documented numbers skipped — this laptop's
+      hardware/OS don't match the deploy target, so the numbers wouldn't transfer.
 - [ ] **M8 — viewer integration.** PR in `ztf/web` (see §8), deployed behind the existing
       `pr<N>.ztf.snad.space` preview before merge.
 

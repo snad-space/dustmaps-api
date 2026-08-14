@@ -6,7 +6,7 @@ use std::{
     sync::Arc,
 };
 
-use memmap2::Mmap;
+use memmap2::{Advice, Mmap};
 use ndarray::ArrayView1;
 use ndarray_npy::ViewNpyExt;
 use thiserror::Error;
@@ -65,6 +65,11 @@ impl CsfdMap {
             mmap,
             path: path.to_owned(),
         };
+        // Queries land on scattered pixel offsets, so sequential readahead
+        // would waste I/O and page-cache space.
+        if let Err(source) = map.mmap.advise(Advice::Random) {
+            tracing::warn!(path = %map.path.display(), %source, "madvise(MADV_RANDOM) failed");
+        }
         let view = map.view().map_err(|source| CsfdError::InvalidNpy {
             path: path.to_owned(),
             source,
