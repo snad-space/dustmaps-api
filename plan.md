@@ -12,7 +12,7 @@ Status: plan only, nothing implemented. Baseline: empty repo (`Cargo.toml` +
 ## TODO
 
 - [x] **M0** axum skeleton: `/api/v1/health`, config, tracing, fmt/clippy/test green
-- [ ] **M1** geometry: ICRS→Galactic + `ang2pix` RING/NESTED, golden-tested vs astropy/healpy
+- [x] **M1** geometry: ICRS→Galactic + `ang2pix` RING/NESTED, using trusted `cdshealpix`
 - [ ] **M2** `prep`: download + convert CSFD → `csfd_ebv.npy` (f32)
 - [ ] **M3** CSFD endpoint: mmap reader, `spawn_blocking`, golden test green
 - [ ] **M4** `prep`: Bayestar19 → dense nested lookup table + `best_fit` f32, equivalence self-check
