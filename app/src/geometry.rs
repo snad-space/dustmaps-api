@@ -27,9 +27,13 @@ pub fn icrs_to_galactic(ra_deg: f64, dec_deg: f64) -> Galactic {
             0.45598381368730173,
         ],
     ];
-    let ra = ra_deg.to_radians();
-    let dec = dec_deg.to_radians();
-    let equatorial = [dec.cos() * ra.cos(), dec.cos() * ra.sin(), dec.sin()];
+    let ra = f64::to_radians(ra_deg);
+    let dec = f64::to_radians(dec_deg);
+    let equatorial = [
+        f64::cos(dec) * f64::cos(ra),
+        f64::cos(dec) * f64::sin(ra),
+        f64::sin(dec),
+    ];
     let galactic = [
         ROTATION[0][0] * equatorial[0]
             + ROTATION[0][1] * equatorial[1]
@@ -41,25 +45,22 @@ pub fn icrs_to_galactic(ra_deg: f64, dec_deg: f64) -> Galactic {
             + ROTATION[2][1] * equatorial[1]
             + ROTATION[2][2] * equatorial[2],
     ];
-    let l_deg = galactic[1]
-        .atan2(galactic[0])
-        .to_degrees()
-        .rem_euclid(360.0);
-    let b_deg = galactic[2].asin().to_degrees();
+    let l_deg = f64::rem_euclid(f64::to_degrees(f64::atan2(galactic[1], galactic[0])), 360.0);
+    let b_deg = f64::to_degrees(f64::asin(galactic[2]));
     Galactic { l_deg, b_deg }
 }
 
 /// Return the RING-ordered HEALPix pixel containing Galactic `(l, b)`.
 pub fn ang2pix_ring(nside: u32, l_deg: f64, b_deg: f64) -> u64 {
-    cdshealpix::ring::hash(nside, l_deg.to_radians(), b_deg.to_radians())
+    cdshealpix::ring::hash(nside, f64::to_radians(l_deg), f64::to_radians(b_deg))
 }
 
 /// Return the NESTED-ordered HEALPix pixel containing Galactic `(l, b)`.
 pub fn ang2pix_nested(nside: u32, l_deg: f64, b_deg: f64) -> u64 {
     cdshealpix::nested::hash(
         cdshealpix::depth(nside),
-        l_deg.to_radians(),
-        b_deg.to_radians(),
+        f64::to_radians(l_deg),
+        f64::to_radians(b_deg),
     )
 }
 
@@ -85,14 +86,14 @@ mod tests {
         // the precision commonly published for this reference position.
         let galactic = icrs_to_galactic(266.4051, -28.936175);
         assert!(galactic.l_deg < 0.001 || galactic.l_deg > 359.999);
-        assert!(galactic.b_deg.abs() < 0.001);
+        assert!(f64::abs(galactic.b_deg) < 0.001);
     }
 
     #[test]
     fn longitude_is_normalized() {
         let a = icrs_to_galactic(0.0, 0.0);
         let b = icrs_to_galactic(360.0, 0.0);
-        assert!((a.l_deg - b.l_deg).abs() < 1e-12);
+        assert!(f64::abs(a.l_deg - b.l_deg) < 1e-12);
         assert!((0.0..360.0).contains(&a.l_deg));
     }
 
@@ -129,13 +130,13 @@ mod tests {
         for (ra, dec, expected_l, expected_b) in goldens {
             let galactic = icrs_to_galactic(ra, dec);
             assert!(
-                (galactic.l_deg - expected_l).abs() < 1e-9,
+                f64::abs(galactic.l_deg - expected_l) < 1e-9,
                 "l {} != {}",
                 galactic.l_deg,
                 expected_l
             );
             assert!(
-                (galactic.b_deg - expected_b).abs() < 1e-9,
+                f64::abs(galactic.b_deg - expected_b) < 1e-9,
                 "b {} != {}",
                 galactic.b_deg,
                 expected_b

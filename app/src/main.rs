@@ -7,6 +7,7 @@ use std::{
 use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
 mod app;
+mod bayestar;
 mod csfd;
 pub mod geometry;
 
@@ -33,6 +34,14 @@ async fn main() {
         eprintln!("failed to load CSFD map: {error}");
         std::process::exit(1);
     });
+    let bayestar = bayestar::BayestarMap::open(
+        data_dir.join("bayestar_lookup.npy"),
+        data_dir.join("bayestar_bestfit.npy"),
+    )
+    .unwrap_or_else(|error| {
+        eprintln!("failed to load Bayestar map: {error}");
+        std::process::exit(1);
+    });
 
     let listen_addr = env::var("DUSTMAPS_LISTEN_ADDR")
         .map(|value| {
@@ -51,7 +60,7 @@ async fn main() {
         });
     tracing::info!(address = %listen_addr, "dustmaps API listening");
 
-    axum::serve(listener, app::router_with_csfd(csfd))
+    axum::serve(listener, app::router_with_maps(csfd, bayestar))
         .with_graceful_shutdown(shutdown_signal())
         .await
         .expect("server failed");

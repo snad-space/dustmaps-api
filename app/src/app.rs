@@ -10,11 +10,13 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use tower_http::trace::TraceLayer;
 
+use crate::bayestar::BayestarMap;
 use crate::csfd::CsfdMap;
 
 #[derive(Clone, Default)]
 struct AppState {
     csfd: Option<Arc<CsfdMap>>,
+    bayestar: Option<Arc<BayestarMap>>,
 }
 
 #[derive(Debug, Serialize)]
@@ -27,14 +29,26 @@ pub fn router() -> Router {
     router_with_state(AppState::default())
 }
 
+#[allow(dead_code)]
 pub fn router_with_csfd(csfd: Arc<CsfdMap>) -> Router {
-    router_with_state(AppState { csfd: Some(csfd) })
+    router_with_state(AppState {
+        csfd: Some(csfd),
+        bayestar: None,
+    })
+}
+
+pub fn router_with_maps(csfd: Arc<CsfdMap>, bayestar: Arc<BayestarMap>) -> Router {
+    router_with_state(AppState {
+        csfd: Some(csfd),
+        bayestar: Some(bayestar),
+    })
 }
 
 fn router_with_state(state: AppState) -> Router {
     Router::new()
         .route("/api/v1/health", get(health))
         .route("/api/v1/csfd", get(csfd))
+        .route("/api/v1/bayestar2019", get(bayestar2019))
         .layer(TraceLayer::new_for_http())
         .with_state(state)
 }
@@ -49,9 +63,16 @@ struct CsfdQuery {
     dec: f64,
 }
 
+#[derive(Debug, Deserialize)]
+struct BayestarQuery {
+    ra: f64,
+    dec: f64,
+    distance: f64,
+}
+
 #[derive(Debug, Serialize)]
 struct EbvResponse {
-    ebv: f64,
+    ebv: Option<f32>,
 }
 
 #[derive(Debug, Serialize)]
@@ -59,15 +80,20 @@ struct ErrorResponse {
     error: String,
 }
 
-async fn csfd(
-    State(state): State<AppState>,
-    Query(query): Query<CsfdQuery>,
-) -> Result<Json<EbvResponse>, (StatusCode, Json<ErrorResponse>)> {
-    if !query.ra.is_finite() || !query.dec.is_finite() || query.dec.abs() > 90.0 {
+fn validate_coordinates(ra: f64, dec: f64) -> Result<(), (StatusCode, Json<ErrorResponse>)> {
+    if !f64::is_finite(ra) || !f64::is_finite(dec) || f64::abs(dec) > 90.0 {
         return Err(bad_request(
             "ra and dec must be finite, with -90 <= dec <= 90",
         ));
     }
+    Ok(())
+}
+
+async fn csfd(
+    State(state): State<AppState>,
+    Query(query): Query<CsfdQuery>,
+) -> Result<Json<EbvResponse>, (StatusCode, Json<ErrorResponse>)> {
+    validate_coordinates(query.ra, query.dec)?;
     let Some(map) = state.csfd else {
         return Err((
             StatusCode::SERVICE_UNAVAILABLE,
@@ -94,6 +120,46 @@ async fn csfd(
                 }),
             )
         })?;
+    Ok(Json(EbvResponse { ebv: Some(result) }))
+}
+
+async fn bayestar2019(
+    State(state): State<AppState>,
+    Query(query): Query<BayestarQuery>,
+) -> Result<Json<EbvResponse>, (StatusCode, Json<ErrorResponse>)> {
+    validate_coordinates(query.ra, query.dec)?;
+    if !f64::is_finite(query.distance) || query.distance <= 0.0 {
+        return Err(bad_request(
+            "ra and dec must be finite, -90 <= dec <= 90, and distance must be positive",
+        ));
+    }
+    let Some(map) = state.bayestar else {
+        return Err((
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(ErrorResponse {
+                error: "Bayestar map is not configured".into(),
+            }),
+        ));
+    };
+    let result =
+        tokio::task::spawn_blocking(move || map.query(query.ra, query.dec, query.distance))
+            .await
+            .map_err(|error| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(ErrorResponse {
+                        error: error.to_string(),
+                    }),
+                )
+            })?
+            .map_err(|error| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(ErrorResponse {
+                        error: error.to_string(),
+                    }),
+                )
+            })?;
     Ok(Json(EbvResponse { ebv: result }))
 }
 
@@ -161,5 +227,20 @@ mod tests {
             .expect("request succeeds");
 
         assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
+    }
+
+    #[tokio::test]
+    async fn bayestar_rejects_non_positive_distance() {
+        let response = router()
+            .oneshot(
+                axum::http::Request::builder()
+                    .uri("/api/v1/bayestar2019?ra=0&dec=0&distance=0")
+                    .body(Body::empty())
+                    .expect("valid request"),
+            )
+            .await
+            .expect("request succeeds");
+
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
     }
 }

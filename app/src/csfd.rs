@@ -82,7 +82,7 @@ impl CsfdMap {
         ArrayView1::<f32>::view_npy(&self.mmap)
     }
 
-    pub fn value(&self, pixel: u64) -> Result<f64, CsfdError> {
+    pub fn value(&self, pixel: u64) -> Result<f32, CsfdError> {
         // `open` validates the shape and dtype before this map is put in app state.
         let view = self.view().map_err(|source| CsfdError::InvalidNpy {
             path: self.path.clone(),
@@ -90,11 +90,10 @@ impl CsfdMap {
         })?;
         view.get(pixel as usize)
             .copied()
-            .map(f64::from)
             .ok_or(CsfdError::PixelOutOfRange(pixel))
     }
 
-    pub fn query(&self, ra_deg: f64, dec_deg: f64) -> Result<f64, CsfdError> {
+    pub fn query(&self, ra_deg: f64, dec_deg: f64) -> Result<f32, CsfdError> {
         let galactic = crate::geometry::icrs_to_galactic(ra_deg, dec_deg);
         let pixel = ang2pix_ring(CSFD_NSIDE, galactic.l_deg, galactic.b_deg);
         self.value(pixel)
