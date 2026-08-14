@@ -7,6 +7,7 @@ reference Python `dustmaps` package.
 ## Layout
 
 - `app/`: the Rust/axum server. Mmaps the prebuilt `.npy` maps and serves the
+- ve
   endpoints.
 - `data-prep/`: a `uv`-run Python package that downloads the raw CSFD and
   Bayestar19 releases and converts them to the flat `.npy` layout the server
@@ -24,6 +25,9 @@ Builds the maps, compiles the server, and serves on port 80 (see
 `docker-compose.yml` / `Dockerfile`). There is no configuration beyond
 `RUST_LOG`; data path and listen address are fixed for this single
 deployment.
+
+For local dev, `docker compose -f docker-compose-dev.yml up --build` serves
+on `localhost:8080`.
 
 ## Testing
 
