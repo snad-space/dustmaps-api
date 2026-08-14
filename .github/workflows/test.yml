@@ -1,0 +1,31 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  golden:
+    name: CSFD golden test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            data-prep/uv.lock
+            integration-tests/pyproject.toml
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app
+      - run: uv run --project data-prep python -m data_prep.build --out /tmp/dustmaps-data
+      - run: |
+          DUSTMAPS_DATA_DIR=/tmp/dustmaps-data DUSTMAPS_LISTEN_ADDR=127.0.0.1:18080 cargo run --release --manifest-path app/Cargo.toml >/tmp/dustmaps-api.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            curl --fail --silent http://127.0.0.1:18080/api/v1/health && break
+            sleep 1
+          done
+      - run: DUSTMAPS_API_URL=http://127.0.0.1:18080 CSFD_FITS=/tmp/dustmaps-data/raw/csfd_ebv.fits uv run --project integration-tests pytest -q integration-tests/tests

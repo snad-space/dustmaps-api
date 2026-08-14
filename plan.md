@@ -132,7 +132,7 @@ FITS in the Rust binary.
 
 ```
 /data/
-  csfd_ebv.npy            # (201 326 592,) f32, RING order          (~805 MB)
+  csfd_ebv.npy            # (50 331 648,) f32, RING order           (~201 MB)
   bayestar_lookup.npy     # (12·1024²,)   u32, NESTED, best_fit row or 0xFFFFFFFF (~50 MB)
   bayestar_bestfit.npy    # (n_pix, 120)  f32, C order
 ```
@@ -179,7 +179,7 @@ machinery solves problems we do not have:
 `.npy` is the smallest thing that is still a real format.
 
 Shapes are still **constants in the Rust source**, because we pin two specific data
-releases: `CSFD_NSIDE = 4096`, `BAYESTAR_NSIDE = 1024`, `N_DIST = 120`, and the 120
+releases: `CSFD_NSIDE = 2048`, `BAYESTAR_NSIDE = 1024`, `N_DIST = 120`, and the 120
 `DM_BIN_EDGES` values. `n_pix` is the one free number, read from the `bestfit` header.
 
 Both halves assert against those constants:
@@ -192,8 +192,9 @@ Both halves assert against those constants:
 
 **CSFD.** Stored as float32 (decision: f32 is enough). The FITS file holds float64, and the
 `f64 → f32` round trip costs ≤6e-8 relative — two orders of magnitude inside the 1e-6
-requirement, and far below CSFD's own uncertainty. In exchange the array halves to ~805 MB
-(nside 4096 → 201 326 592 pixels; verify at prep time), which twice as much of fits in page
+requirement, and far below CSFD's own uncertainty. In exchange the array is ~201 MB
+(nside 2048 → 50 331 648 pixels; verified against the pinned CSFD release), which makes
+more of it fit in page
 cache and makes the image meaningfully smaller. The server reads the f32 and widens to f64
 for the response. Values are converted with plain `astype(np.float32)` (round-to-nearest-
 even), and the golden test compares against Python's f64 answers at the 1e-6 tolerance, so
@@ -257,7 +258,7 @@ HEALPix index is a dense integer in `[0, 12·nside²)` by construction; asking a
 
 - **CSFD would get strictly worse.** One addressed read becomes a ~4-level B-tree descent
   (4 page reads) plus record-header and varint decoding, and storage grows from 4 bytes
-  per pixel to ~10–15 with per-row overhead: **~2–3 GB instead of 805 MB**, for 201 M rows
+  per pixel to ~10–15 with per-row overhead: **~0.7 GB instead of 201 MB**, for 50 M rows
   whose key is a counter.
 - **`best_fit` would gain nothing** — 120 floats per row becomes a BLOB, i.e. raw bytes
   and our own offset arithmetic, now behind a B-tree.
@@ -565,7 +566,7 @@ is; it calls an API like it calls every other SNAD API.
       data.
 - [ ] **M1 — geometry.** ICRS→Galactic + `ang2pix` (RING/NESTED) with astropy/healpy
       golden unit tests. This is the foundation both maps stand on.
-- [x] **M2 — data-prep for CSFD.** Download, convert to `csfd_ebv.npy`, confirm nside 4096.
+- [x] **M2 — data-prep for CSFD.** Download, convert to `csfd_ebv.npy`, confirm nside 2048.
 - [ ] **M3 — CSFD endpoint.** mmap reader, `spawn_blocking`, golden test green.
 - [ ] **M4 — prep for Bayestar.** Lookup-table build + the `_find_data_idx` equivalence
       self-check; confirm finest nside and `n_pix`.
@@ -593,7 +594,7 @@ is; it calls an API like it calls every other SNAD API.
   Rust side with the existing `ndarray-npy` crate, not a hand-written header parser.
   Alternatives (raw, Arrow, FITS, safetensors, HDF5, Zarr, Parquet) weighed in §3. No
   sidecar metadata files: shapes stay Rust constants, checked both ways.
-- CSFD is stored as `f32` (~805 MB), not `f64` — the rounding is ≤6e-8 relative (§3).
+- CSFD is stored as `f32` (~201 MB), not `f64` — the rounding is ≤6e-8 relative (§3).
   Both map arrays are therefore f32, and all arithmetic happens in f64.
 - Repo home is `snad-space/dustmaps-api`.
 - Attribution (Chiang 2023 for CSFD, Green et al. 2019 for Bayestar19, Green 2018 for

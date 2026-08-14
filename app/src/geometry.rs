@@ -3,8 +3,6 @@
 //! Angles exposed by this module are in degrees where noted; `cdshealpix`
 //! receives radians, as required by its API.
 
-use cdshealpix::nested::map::astrometry::{gal::Galactic as CdsGalactic, math::Coo};
-
 /// Galactic longitude and latitude in degrees.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Galactic {
@@ -14,8 +12,40 @@ pub struct Galactic {
 
 /// Convert an ICRS position, given in degrees, to Galactic coordinates.
 pub fn icrs_to_galactic(ra_deg: f64, dec_deg: f64) -> Galactic {
-    let frame = CdsGalactic::new_for_fk5_j2000_and_icrs();
-    let (l_deg, b_deg) = frame.coo_eq2gal(&Coo::from_deg(ra_deg, dec_deg)).to_deg();
+    // ICRS/J2000 -> Galactic rotation used by Astropy/ERFA.
+    #[allow(clippy::excessive_precision)]
+    const ROTATION: [[f64; 3]; 3] = [
+        [
+            -0.05487565771259168,
+            -0.8734370519556163,
+            -0.4838350736167155,
+        ],
+        [0.4941094371927275, -0.44482972122329517, 0.7469821839866676],
+        [
+            -0.8676661375596587,
+            -0.1980763372730008,
+            0.45598381368730173,
+        ],
+    ];
+    let ra = ra_deg.to_radians();
+    let dec = dec_deg.to_radians();
+    let equatorial = [dec.cos() * ra.cos(), dec.cos() * ra.sin(), dec.sin()];
+    let galactic = [
+        ROTATION[0][0] * equatorial[0]
+            + ROTATION[0][1] * equatorial[1]
+            + ROTATION[0][2] * equatorial[2],
+        ROTATION[1][0] * equatorial[0]
+            + ROTATION[1][1] * equatorial[1]
+            + ROTATION[1][2] * equatorial[2],
+        ROTATION[2][0] * equatorial[0]
+            + ROTATION[2][1] * equatorial[1]
+            + ROTATION[2][2] * equatorial[2],
+    ];
+    let l_deg = galactic[1]
+        .atan2(galactic[0])
+        .to_degrees()
+        .rem_euclid(360.0);
+    let b_deg = galactic[2].asin().to_degrees();
     Galactic { l_deg, b_deg }
 }
 
@@ -72,5 +102,44 @@ mod tests {
         assert_eq!(ang2pix_ring(1, 40.0, -90.0), 8);
         assert_eq!(ang2pix_nested(1, 45.0, 90.0), 0);
         assert!(ang2pix_nested(1, 45.0, -90.0) < 12);
+    }
+
+    #[test]
+    fn rotation_matches_astropy_goldens() {
+        let goldens = [
+            (
+                194.7545309478567,
+                -18.2512760863485,
+                305.4591565365893,
+                44.58327212072334,
+            ),
+            (
+                184.24879007626018,
+                25.47694717342729,
+                223.07344679015384,
+                82.10800905739632,
+            ),
+            (
+                331.7934220050504,
+                -35.695893147402366,
+                8.702988164490204,
+                -54.19396087242497,
+            ),
+        ];
+        for (ra, dec, expected_l, expected_b) in goldens {
+            let galactic = icrs_to_galactic(ra, dec);
+            assert!(
+                (galactic.l_deg - expected_l).abs() < 1e-9,
+                "l {} != {}",
+                galactic.l_deg,
+                expected_l
+            );
+            assert!(
+                (galactic.b_deg - expected_b).abs() < 1e-9,
+                "b {} != {}",
+                galactic.b_deg,
+                expected_b
+            );
+        }
     }
 }

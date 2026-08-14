@@ -15,7 +15,7 @@ from dustmaps.fetch_utils import download_and_verify
 
 CSFD_URL = "https://zenodo.org/records/8207175/files/csfd_ebv.fits?download=1"
 CSFD_MD5 = "31cd2eec51bcb5f106af84a610ced53c"
-CSFD_NSIDE = 4096
+CSFD_NSIDE = 2048
 CSFD_NPIX = 12 * CSFD_NSIDE**2
 OUTPUT_NAME = "csfd_ebv.npy"
 

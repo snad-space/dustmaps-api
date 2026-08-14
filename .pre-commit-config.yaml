@@ -40,7 +40,7 @@ repos:
 
       - id: data-prep-tests
         name: data-prep tests
-        entry: uv run --project data-prep --group test pytest -q
+        entry: uv run --project data-prep --group test pytest -q data-prep/tests
         language: system
         types: [python]
         pass_filenames: false

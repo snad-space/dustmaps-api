@@ -1,11 +1,16 @@
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use std::{
+    env,
+    net::{IpAddr, Ipv4Addr, SocketAddr},
+    path::PathBuf,
+};
 
 use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
 mod app;
+mod csfd;
 pub mod geometry;
 
-const LISTEN_ADDR: SocketAddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), 80);
+const DEFAULT_LISTEN_ADDR: SocketAddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), 80);
 
 fn init_tracing() {
     let filter = EnvFilter::try_from_default_env()
@@ -20,15 +25,33 @@ fn init_tracing() {
 async fn main() {
     init_tracing();
 
-    let listener = tokio::net::TcpListener::bind(LISTEN_ADDR)
+    let data_dir = env::var_os("DUSTMAPS_DATA_DIR")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from("/data"));
+    let csfd_path = data_dir.join("csfd_ebv.npy");
+    let csfd = csfd::CsfdMap::open(&csfd_path).unwrap_or_else(|error| {
+        eprintln!("failed to load CSFD map: {error}");
+        std::process::exit(1);
+    });
+
+    let listen_addr = env::var("DUSTMAPS_LISTEN_ADDR")
+        .map(|value| {
+            value.parse().unwrap_or_else(|error| {
+                eprintln!("invalid DUSTMAPS_LISTEN_ADDR {value:?}: {error}");
+                std::process::exit(1);
+            })
+        })
+        .unwrap_or(DEFAULT_LISTEN_ADDR);
+
+    let listener = tokio::net::TcpListener::bind(listen_addr)
         .await
         .unwrap_or_else(|error| {
-            eprintln!("failed to bind {LISTEN_ADDR}: {error}");
+            eprintln!("failed to bind {listen_addr}: {error}");
             std::process::exit(1);
         });
-    tracing::info!(address = %LISTEN_ADDR, "dustmaps API listening");
+    tracing::info!(address = %listen_addr, "dustmaps API listening");
 
-    axum::serve(listener, app::router())
+    axum::serve(listener, app::router_with_csfd(csfd))
         .with_graceful_shutdown(shutdown_signal())
         .await
         .expect("server failed");
