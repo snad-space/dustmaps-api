@@ -1,7 +1,6 @@
 ci:
   skip:
     - cargo-clippy
-    - cargo-test
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -32,13 +31,6 @@ repos:
       - id: cargo-clippy
         name: cargo clippy
         entry: cargo clippy --manifest-path app/Cargo.toml --all-targets --all-features -- -D warnings
-        language: system
-        types: [rust]
-        pass_filenames: false
-
-      - id: cargo-test
-        name: cargo test
-        entry: cargo test --manifest-path app/Cargo.toml
         language: system
         types: [rust]
         pass_filenames: false

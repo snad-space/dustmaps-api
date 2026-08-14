@@ -6,8 +6,19 @@ on:
     branches: [main]
 
 jobs:
-  tests:
-    name: Unit tests
+  app-tests:
+    name: App unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app
+      - run: cargo test --manifest-path app/Cargo.toml
+
+  data-prep-tests:
+    name: Data-prep unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,11 +26,6 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: data-prep/uv.lock
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: app
-      - run: cargo test --manifest-path app/Cargo.toml
       - run: uv run --project data-prep --group test pytest -q data-prep/tests
 
   golden:
