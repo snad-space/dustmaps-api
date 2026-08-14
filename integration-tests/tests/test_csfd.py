@@ -14,16 +14,5 @@ def test_csfd_matches_dustmaps() -> None:
     expected = dustmaps_values(map_path, sample)
     actual = np.asarray(api_values(server_url, sample))
 
-    tolerance = np.maximum(1e-9, np.abs(expected) * 1e-6)
     assert np.all(np.isfinite(actual))
-    mismatches = np.flatnonzero(np.abs(actual - expected) > tolerance)
-    assert len(mismatches) == 0, [
-        {
-            "ra": sample[index][0],
-            "dec": sample[index][1],
-            "actual": float(actual[index]),
-            "dustmaps": float(expected[index]),
-            "tolerance": float(tolerance[index]),
-        }
-        for index in mismatches[:10]
-    ]
+    assert np.allclose(actual, expected, rtol=1e-6, atol=1e-9)

@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-test = ["pytest>=8,<9"]
+test = ["pytest>=9.0.3"]
 
 [build-system]
 requires = ["hatchling"]

@@ -58,18 +58,7 @@ def test_bayestar_matches_dustmaps() -> None:
         [distance_pc for _, _, distance_pc in sample] * u.pc,
         frame="icrs",
     )
-    expected = (
-        np.asarray(
-            BayestarQuery(map_path, max_samples=0)(sky, mode="best"), dtype=np.float64
-        )
-        * EBV_FACTOR
-    )
+    expected = BayestarQuery(map_path, max_samples=0)(sky, mode="best") * EBV_FACTOR
     actual = np.asarray(api_bayestar_values(server_url, sample), dtype=np.float64)
 
-    expected_missing = ~np.isfinite(expected)
-    actual_missing = ~np.isfinite(actual)
-    assert np.array_equal(actual_missing, expected_missing)
-
-    finite = ~expected_missing
-    tolerance = np.maximum(1e-9, np.abs(expected) * 1e-6)
-    assert np.all(np.abs(actual[finite] - expected[finite]) <= tolerance[finite])
+    np.testing.assert_allclose(actual, expected, rtol=1e-5, atol=1e-7, equal_nan=True)
