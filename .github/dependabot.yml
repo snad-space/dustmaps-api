@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  - package-ecosystem: cargo
+    directory: /app
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: uv
+    directory: /data-prep
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: uv
+    directory: /integration-tests
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly

@@ -1,0 +1,7 @@
+.git
+.pytest_cache
+**/__pycache__
+**/.venv
+app/target
+data-prep/.venv
+integration-tests/.venv

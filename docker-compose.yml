@@ -1,0 +1,17 @@
+services:
+  dustmaps-app:
+    image: ghcr.io/snad-space/dustmaps-api:latest
+    build: .
+    environment:
+      VIRTUAL_HOST: dustmaps.snad.space
+      HTTPS_METHOD: noredirect
+      DYNDNS_HOST: dustmaps.snad.space
+      LETSENCRYPT_HOST: dustmaps.snad.space
+      LETSENCRYPT_EMAIL: letsencrypt@snad.space
+    networks:
+      - proxy
+    restart: always
+
+networks:
+  proxy:
+    external: true
