@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dustmaps-api: reference</title>
+<style>
+  body {
+    max-width: 42rem;
+    margin: 3rem auto;
+    padding: 0 1.25rem;
+    font-family: system-ui, sans-serif;
+    line-height: 1.55;
+    color: #1a1a1a;
+  }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, Menlo, monospace; }
+  code {
+    background: #f2f2f2;
+    padding: .1em .35em;
+    border-radius: 4px;
+    font-size: .92em;
+  }
+  pre {
+    background: #f6f6f6;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    overflow-x: auto;
+    font-size: .88rem;
+  }
+  a { color: #22114c; }
+  a:hover { color: #fcbd43; }
+  h1 { font-size: 1.6rem; margin-bottom: .2rem; color: #22114c; }
+  p.lede { color: #555; margin-top: 0; }
+  h2 {
+    font-size: 1.1rem;
+    margin: 2.5rem 0 .75rem;
+    font-family: ui-monospace, SFMono-Regular, Consolas, Menlo, monospace;
+    color: #22114c;
+  }
+  h3 { font-size: 1rem; margin: 2rem 0 .5rem; }
+  table { border-collapse: collapse; font-size: .9rem; margin: .75rem 0; }
+  th, td { text-align: left; padding: .3rem 1rem .3rem 0; border-bottom: 1px solid #e0e0e0; }
+  th { color: #555; font-weight: 600; }
+  td code { background: none; padding: 0; }
+  .try {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0 2rem;
+  }
+  .try label { display: block; font-size: .8rem; color: #555; margin-bottom: .2rem; }
+  .try .row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: .75rem; }
+  .try .row > div { flex: 1; min-width: 100px; }
+  .try input[type=text] {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: .4rem .5rem;
+    font-family: ui-monospace, SFMono-Regular, Consolas, Menlo, monospace;
+    font-size: .9rem;
+  }
+  .try button {
+    background: #22114c;
+    color: #fff;
+    border: 1px solid #22114c;
+    border-radius: 4px;
+    padding: .4rem 1rem;
+    font-size: .9rem;
+    cursor: pointer;
+  }
+  .try button:hover { color: #fcbd43; }
+  .try .result {
+    margin-top: .75rem;
+    background: #f6f6f6;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: .6rem .8rem;
+    font-family: ui-monospace, SFMono-Regular, Consolas, Menlo, monospace;
+    font-size: .85rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .try .result.err { color: #c0392b; }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+    color: #555;
+    font-size: .9rem;
+  }
+</style>
+</head>
+<body>
+  <h1>SNAD dustmaps API v1</h1>
+  <p class="lede">Two single-coordinate endpoints. All responses are JSON.
+  Coordinates are ICRS degrees; distance is parsecs. Values match the reference
+  Python <a href="https://dustmaps.readthedocs.io">dustmaps</a> package to within
+  1e-6 relative tolerance.</p>
+
+  <h2>GET /api/v1/csfd</h2>
+  <p>2D E(B&minus;V) from the CSFD map (Chiang 2023), nearest HEALPix pixel, no
+  interpolation.</p>
+  <table>
+    <tr><th>param</th><th>type</th><th>description</th></tr>
+    <tr><td><code>ra</code></td><td>float, deg</td><td>Right ascension, ICRS</td></tr>
+    <tr><td><code>dec</code></td><td>float, deg</td><td>Declination, ICRS, in [&minus;90, 90]</td></tr>
+  </table>
+  <pre>$ curl 'https://dustmaps.snad.space/api/v1/csfd?ra=83.6331&amp;dec=22.0145'
+{"ebv":0.5432}</pre>
+
+  <div class="try" data-endpoint="/api/v1/csfd">
+    <div class="row">
+      <div><label for="csfd-ra">ra (deg)</label><input type="text" id="csfd-ra" class="ra" value="83.6331"></div>
+      <div><label for="csfd-dec">dec (deg)</label><input type="text" id="csfd-dec" class="dec" value="22.0145"></div>
+    </div>
+    <button class="run">Try it</button>
+    <div class="result" hidden></div>
+  </div>
+
+  <h2>GET /api/v1/bayestar2019</h2>
+  <p>3D E(B&minus;V) from the Bayestar19 map (Green et al. 2019), <code>mode='best'</code>,
+  with the <code>0.884</code> conversion factor already applied. Returns
+  <code>{"ebv": null}</code> (HTTP 200) outside the PS1 footprint (roughly dec &lt; &minus;30&deg;).</p>
+  <table>
+    <tr><th>param</th><th>type</th><th>description</th></tr>
+    <tr><td><code>ra</code></td><td>float, deg</td><td>Right ascension, ICRS</td></tr>
+    <tr><td><code>dec</code></td><td>float, deg</td><td>Declination, ICRS, in [&minus;90, 90]</td></tr>
+    <tr><td><code>distance</code></td><td>float, pc</td><td>Distance, must be &gt; 0</td></tr>
+  </table>
+  <pre>$ curl 'https://dustmaps.snad.space/api/v1/bayestar2019?ra=266.4051&amp;dec=-28.936175&amp;distance=8000'
+{"ebv":1.9033}
+
+$ curl 'https://dustmaps.snad.space/api/v1/bayestar2019?ra=0&amp;dec=-80&amp;distance=1000'
+{"ebv":null}</pre>
+
+  <div class="try" data-endpoint="/api/v1/bayestar2019">
+    <div class="row">
+      <div><label for="bayestar-ra">ra (deg)</label><input type="text" id="bayestar-ra" class="ra" value="266.4051"></div>
+      <div><label for="bayestar-dec">dec (deg)</label><input type="text" id="bayestar-dec" class="dec" value="-28.936175"></div>
+      <div><label for="bayestar-distance">distance (pc)</label><input type="text" id="bayestar-distance" class="distance" value="8000"></div>
+    </div>
+    <button class="run">Try it</button>
+    <div class="result" hidden></div>
+  </div>
+
+  <h2>GET /api/v1/health</h2>
+  <p>Liveness probe. Returns <code>{"status":"ok"}</code> once both maps are mapped and
+  shape-validated; used by the container <code>HEALTHCHECK</code>.</p>
+
+  <h3>Errors</h3>
+  <p>Bad input (non-finite <code>ra</code>/<code>dec</code>, <code>|dec| &gt; 90</code>, or
+  non-positive <code>distance</code>) &rarr; <code>400</code> with a JSON body:</p>
+  <pre>{"error":"ra and dec must be finite, with -90 &lt;= dec &lt;= 90"}</pre>
+
+  <footer>
+    Maps: CSFD (Chiang 2023); Bayestar19 (Green et al. 2019), accessed via
+    <a href="https://dustmaps.readthedocs.io">dustmaps</a> (Green 2018).
+    Source on <a href="https://github.com/snad-space/dustmaps-api">GitHub</a>.
+  </footer>
+
+<script>
+  document.querySelectorAll(".try").forEach(function (card) {
+    var base = card.getAttribute("data-endpoint");
+    var button = card.querySelector(".run");
+    var result = card.querySelector(".result");
+    button.addEventListener("click", function () {
+      var params = new URLSearchParams();
+      card.querySelectorAll("input[type=text]").forEach(function (input) {
+        params.set(input.className, input.value);
+      });
+      var url = base + "?" + params.toString();
+      result.hidden = false;
+      result.classList.remove("err");
+      result.textContent = "GET " + url + " ...";
+      fetch(url)
+        .then(function (r) {
+          return r.json().then(function (body) { return { ok: r.ok, status: r.status, body: body }; });
+        })
+        .then(function (res) {
+          result.classList.toggle("err", !res.ok);
+          result.textContent = "GET " + url + "\nHTTP " + res.status + "\n" + JSON.stringify(res.body, null, 2);
+        })
+        .catch(function (error) {
+          result.classList.add("err");
+          result.textContent = "GET " + url + "\nrequest failed: " + error;
+        });
+    });
+  });
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@ use axum::{
     Router,
     extract::{Query, State},
     http::StatusCode,
-    response::Json,
+    response::{Html, Json},
     routing::get,
 };
 use serde::{Deserialize, Serialize};
@@ -12,6 +12,9 @@ use tower_http::trace::TraceLayer;
 
 use crate::bayestar::BayestarMap;
 use crate::csfd::CsfdMap;
+
+const INDEX_HTML: &str = include_str!("assets/index.html");
+const HELP_HTML: &str = include_str!("assets/help.html");
 
 #[derive(Clone, Default)]
 struct AppState {
@@ -46,11 +49,21 @@ pub fn router_with_maps(csfd: Arc<CsfdMap>, bayestar: Arc<BayestarMap>) -> Route
 
 fn router_with_state(state: AppState) -> Router {
     Router::new()
+        .route("/", get(index))
+        .route("/help", get(help))
         .route("/api/v1/health", get(health))
         .route("/api/v1/csfd", get(csfd))
         .route("/api/v1/bayestar2019", get(bayestar2019))
         .layer(TraceLayer::new_for_http())
         .with_state(state)
+}
+
+async fn index() -> Html<&'static str> {
+    Html(INDEX_HTML)
+}
+
+async fn help() -> Html<&'static str> {
+    Html(HELP_HTML)
 }
 
 async fn health(State(_state): State<AppState>) -> (StatusCode, Json<HealthResponse>) {
@@ -178,6 +191,48 @@ mod tests {
     use axum::body::Body;
     use http_body_util::BodyExt;
     use tower::ServiceExt;
+
+    #[tokio::test]
+    async fn index_returns_html() {
+        let response = router()
+            .oneshot(
+                axum::http::Request::builder()
+                    .uri("/")
+                    .body(Body::empty())
+                    .expect("valid request"),
+            )
+            .await
+            .expect("request succeeds");
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert!(
+            response.headers()["content-type"]
+                .to_str()
+                .unwrap()
+                .starts_with("text/html")
+        );
+    }
+
+    #[tokio::test]
+    async fn help_returns_html() {
+        let response = router()
+            .oneshot(
+                axum::http::Request::builder()
+                    .uri("/help")
+                    .body(Body::empty())
+                    .expect("valid request"),
+            )
+            .await
+            .expect("request succeeds");
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert!(
+            response.headers()["content-type"]
+                .to_str()
+                .unwrap()
+                .starts_with("text/html")
+        );
+    }
 
     #[tokio::test]
     async fn health_returns_ok_json() {

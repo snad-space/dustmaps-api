@@ -1,0 +1,85 @@
+  <!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dustmaps-api</title>
+<style>
+  body {
+    max-width: 40rem;
+    margin: 3rem auto;
+    padding: 0 1.25rem;
+    font-family: system-ui, sans-serif;
+    line-height: 1.55;
+    color: #1a1a1a;
+  }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, Menlo, monospace; }
+  code {
+    background: #f2f2f2;
+    padding: .1em .35em;
+    border-radius: 4px;
+    font-size: .92em;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: .2rem; color: #22114c; }
+  p.tagline { color: #555; margin-top: 0; }
+  ul.endpoints { padding-left: 1.2rem; }
+  ul.endpoints li { margin-bottom: .5rem; }
+  a { color: #22114c; }
+  a:hover { color: #fcbd43; }
+  .status { font-size: .9rem; color: #555; margin-top: 2rem; }
+  .status .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #bbb;
+    margin-right: .4em;
+  }
+  .status .dot.ok { background: #22114c; }
+  .status .dot.bad { background: #c0392b; }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+    color: #555;
+    font-size: .9rem;
+  }
+</style>
+</head>
+<body>
+  <h1>SNAD dustmaps API</h1>
+  <p class="tagline">A small HTTP service answering dust-extinction queries: E(B&minus;V)
+  at a sky position, for <a href="https://ztf.snad.space">ztf.snad.space</a>.</p>
+
+  <p>See the <a href="/help">API reference and examples</a>.</p>
+
+  <ul class="endpoints">
+    <li><code>GET /api/v1/csfd?ra=&lt;deg&gt;&amp;dec=&lt;deg&gt;</code>: 2D E(B&minus;V), CSFD (Chiang 2023)</li>
+    <li><code>GET /api/v1/bayestar2019?ra=&lt;deg&gt;&amp;dec=&lt;deg&gt;&amp;distance=&lt;pc&gt;</code>: 3D E(B&minus;V), Bayestar19 (Green et al. 2019)</li>
+    <li><code>GET /api/v1/health</code>: liveness check</li>
+  </ul>
+
+  <p class="status"><span id="dot" class="dot"></span><span id="status-text">checking service status&hellip;</span></p>
+
+  <footer>
+    Source on <a href="https://github.com/snad-space/dustmaps-api">GitHub</a>.
+  </footer>
+
+<script>
+  fetch("/api/v1/health").then(function (r) {
+    var dot = document.getElementById("dot");
+    var text = document.getElementById("status-text");
+    if (r.ok) {
+      dot.classList.add("ok");
+      text.textContent = "service healthy";
+    } else {
+      dot.classList.add("bad");
+      text.textContent = "service reporting an error (HTTP " + r.status + ")";
+    }
+  }).catch(function () {
+    document.getElementById("dot").classList.add("bad");
+    document.getElementById("status-text").textContent = "could not reach the service";
+  });
+</script>
+</body>
+</html>
