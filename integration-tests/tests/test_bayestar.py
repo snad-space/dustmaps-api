@@ -6,9 +6,7 @@ import astropy.units as u
 import numpy as np
 from astropy.coordinates import SkyCoord
 from dustmaps.bayestar import BayestarQuery
-
 from integration_tests.utils import api_bayestar_values
-
 
 EBV_FACTOR = 0.884
 SAMPLE = (

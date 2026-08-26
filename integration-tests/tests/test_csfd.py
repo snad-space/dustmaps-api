@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 
 import numpy as np
-
 from integration_tests.utils import api_values, coordinates, dustmaps_values
 
 

@@ -1,5 +1,4 @@
 import numpy as np
-
 from data_prep import bayestar, csfd
 
 
