@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
-import numpy as np
 import astropy.units as u
 import h5py
+import numpy as np
 from astropy.coordinates import Latitude, Longitude
 from cdshealpix.nested import healpix_to_lonlat, lonlat_to_healpix
 from dustmaps.fetch_utils import download_and_verify
