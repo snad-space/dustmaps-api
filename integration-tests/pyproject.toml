@@ -5,7 +5,7 @@ requires-python = ">=3.12"
 dependencies = [
     "astropy>=8.0.1,<9",
     "dustmaps>=1.0",
-    "numpy>=2,<3",
+    "numpy>=2.5.3,<3",
     "pytest>=9.0.3",
 ]
 
