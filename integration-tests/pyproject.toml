@@ -6,7 +6,7 @@ dependencies = [
     "astropy>=8.0.1,<9",
     "dustmaps>=1.0",
     "numpy>=2,<3",
-    "pytest>=9.0.3",
+    "pytest>=9.2.0",
 ]
 
 [build-system]
