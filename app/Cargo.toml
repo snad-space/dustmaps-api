@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 axum = "0.8"
-cdshealpix = "0.9.1"
+cdshealpix = "0.10.1"
 memmap2 = "0.9"
 ndarray = "0.17"
 ndarray-npy = "0.10"
